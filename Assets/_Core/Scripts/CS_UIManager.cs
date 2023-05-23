@@ -3,60 +3,91 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class UIManager : MonoBehaviour
+public class CS_UIManager : MonoBehaviour
 {
     #region F/P
-    #region scripts
+    #region Appel scripts
 
     [Space, Header("Appel scripts"), Space]
     [SerializeField]
-    TwitchConnect twitchConnectScript;
-
+    CS_TwitchConnect twitchConnectScript;
     [SerializeField]
-    TwitchID twitchIDScript;
+    CS_TwitchID twitchIDScript;
     #endregion
 
     [SerializeField, Space]
-    KeyCode menuKey= KeyCode.Escape;
-
-    [SerializeField, Space]
-    GameObject toggleHideNShowDatas;
+    KeyCode menuKey = KeyCode.Escape;    
 
     [SerializeField, Space]
     Canvas mainCanvas;
+
     bool mainCanvasIsActive;
+
+    [HideInInspector]
+    public bool TwitchCanvaIsVisible;
 
     [SerializeField, Space]
     Canvas twitchIDCanvas;
+
     [Space]
     public TMP_InputField ChannelToConnectInput;
+
+    [Space]
+    public TMP_Text TextChannelToConnect;
+
+    [Space]
+    public TMP_Text TextHideChannelToConnect;
+
+    [Space]
+    public TMP_Text PlaceHolderTextChannelToConnect;
+
     [Space]
     public TMP_InputField ChannelInterfaceInput;
+
+    [Space]
+    public TMP_Text TextChannelInterface;
+
+    [Space]
+    public TMP_Text PlaceHolderTextChannelInterface;
+
     [Space]
     public TMP_InputField ChannelOauthInput;
-    [SerializeField]
+
+    [Space]
+    public TMP_Text TextOauth;
+
+    [Space]
+    public TMP_Text PlaceHolderTextChannelOauth;
+
+    [SerializeField, Space]
     Image ConnectionIndicatorImage;
+
     [SerializeField]
     Button connectionButton;
+
     [SerializeField]
     Button disconnectionButton;
+
     public Toggle ConnectAtStartToggle;
 
+    [SerializeField]
+    Toggle showDatas;
+    public Toggle ShowDatas => showDatas;
     #endregion
 
     #region UI behavior
     void ConnectionIndicator()
     {
-        if (mainCanvasIsActive == true)
+        if (mainCanvasIsActive)
         {
-            if (twitchConnectScript.IsConnect == true)
+            if (twitchConnectScript.IsConnect)
             {
                 ConnectionIndicatorImage.color = Color.green;
                 connectionButton.gameObject.SetActive(false);
                 disconnectionButton.gameObject.SetActive(true);
             }
 
-            else if (twitchConnectScript.IsConnect == false)
+            else if (!twitchConnectScript.IsConnect)
             {
                 ConnectionIndicatorImage.color = Color.red;
                 connectionButton.gameObject.SetActive(true);
@@ -69,6 +100,7 @@ public class UIManager : MonoBehaviour
     void Init()
     {
         mainCanvasIsActive = false;
+        TwitchCanvaIsVisible = false;
         HideMainUI();
         HideTwitchIDUI();
     }
@@ -83,19 +115,21 @@ public class UIManager : MonoBehaviour
     public void HideTwitchIDUI()
     {
         twitchIDCanvas.gameObject.SetActive(false);
+        TwitchCanvaIsVisible = false;
     }
     public void ShowTwitchIDUI()
     {
         twitchIDCanvas.gameObject.SetActive(true);
+        TwitchCanvaIsVisible = true;
     }
     void CheckMainUI()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && mainCanvasIsActive == false)
+        if (Input.GetKeyDown(menuKey) && !mainCanvasIsActive)
         {
             mainCanvasIsActive = true;
             ShowNHideMainUI(mainCanvasIsActive);
         }
-        else if (Input.GetKeyDown(menuKey) && mainCanvasIsActive == true)
+        else if (Input.GetKeyDown(menuKey) && mainCanvasIsActive)
         {
             mainCanvasIsActive = false;
             ShowNHideMainUI(mainCanvasIsActive);

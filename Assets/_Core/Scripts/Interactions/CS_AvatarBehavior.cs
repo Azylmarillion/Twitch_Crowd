@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AvatarBehavior : MonoBehaviour
+public class CS_AvatarBehavior : MonoBehaviour
 {
     [SerializeField]
     Animator avatarAnimator;
@@ -10,8 +10,7 @@ public class AvatarBehavior : MonoBehaviour
     bool playTimer = false;
     [SerializeField]
     string twerkRewardIrd = "6eb76484-6625-415b-9528-49823771020e";
-    public string TwerkRewardId {get {return twerkRewardIrd;}
-    }
+    public string TwerkRewardId => twerkRewardIrd;
 
     public void MakeItTwerk()
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 
-public class TwitchConnect : MonoBehaviour
+public class CS_TwitchConnect : MonoBehaviour
 {
     #region F/P
     StreamReader reader;
@@ -16,21 +16,21 @@ public class TwitchConnect : MonoBehaviour
     const int PORT = 6667;
     const string URL = "irc.chat.twitch.tv";
     bool isConnect;
-    public bool IsConnect { get { return isConnect; } }
+    public bool IsConnect => isConnect;
     
-    bool canCheck;
+    bool canCheck;//kill
 
     #region Appel scripts
 
     [Space, Header("Appel scripts"), Space]
     [SerializeField]
-    AvatarBehavior avatarBehav;
+    CS_AvatarBehavior avatarBehav;
 
     [SerializeField]
-    TwitchID twitchID;
+    CS_TwitchID twitchID;
 
     [SerializeField]
-    ChatterData chatterDatas;
+    CS_ChatterData chatterDatas;
     
     #endregion
     #endregion
@@ -38,48 +38,46 @@ public class TwitchConnect : MonoBehaviour
     #region ProcessDatas
     void ProcessMessages()
     {
-        if (twitchClient.Connected)
+        if (!twitchClient.Connected) return;
+
+        if (twitchClient.Available <= 0) return;
+        
+        string _message = reader.ReadLine();
+
+
+
+        if (_message.Contains("PRIVMSG") && !_message.Contains("custom-reward-id="))
         {
-            if (twitchClient.Available > 0)
-            {
-                string _message = reader.ReadLine();
+            string[] _nameSeparator = new string[] { "display-name=" };
+            string[] _nameResult = _message.Split(_nameSeparator, StringSplitOptions.None);
+            int _splitName = _nameResult[1].IndexOf(";", 0);
+            string _chatterName = _nameResult[1].Substring(0, _splitName);
 
+            string[] _msgSeparator = new string[] { "PRIVMSG" };
+            string[] _msgResult = _message.Split(_msgSeparator, StringSplitOptions.None);
+            string[] _splitMsg = _msgResult[1].Split(':');
+            string _finalMsg = _splitMsg[1];
 
-
-                if (_message.Contains("PRIVMSG") && !_message.Contains("custom-reward-id="))
-                {
-                    string[] _nameSeparator = new string[] { "display-name=" };
-                    string[] _nameResult = _message.Split(_nameSeparator, StringSplitOptions.None);
-                    int _splitName = _nameResult[1].IndexOf(";", 0);
-                    string _chatterName = _nameResult[1].Substring(0, _splitName);
-
-                    string[] _msgSeparator = new string[] { "PRIVMSG" };
-                    string[] _msgResult = _message.Split(_msgSeparator, StringSplitOptions.None);
-                    string[] _splitMsg = _msgResult[1].Split(':');
-                    string _finalMsg = _splitMsg[1];
-
-                    print("message final : " + _finalMsg);//kill
-                    print("chatter name : " + _chatterName);//kill
-                }
-
-                print("full message : " + _message);//kill
-
-                /*if (_message.Contains("@badge-info=subscriber")|| _message.Contains("@badge-info=founder"))
-                {
-                    print("this person is a subscriber");//kill
-                }*/
-
-                if (_message.Contains("custom-reward-id="))
-                {
-                    string[] _rewardSeparator = new string[] { "custom-reward-id=" };
-                    string[] _rewardResult = _message.Split(_rewardSeparator, StringSplitOptions.None);
-                    string _rewardID = _rewardResult[1].Substring(0, _rewardResult[1].IndexOf(";", 0));
-
-                    ProcessRewards(_rewardID);
-                    print("Redeemed a custom reward ID : " + _rewardID);//kill
-                }
-            }
+            print("message final : " + _finalMsg);//kill
+            print("chatter name : " + _chatterName);//kill
         }
+
+        print("full message : " + _message);//kill
+
+        /*if (_message.Contains("@badge-info=subscriber")|| _message.Contains("@badge-info=founder"))
+        {
+            print("this person is a subscriber");//kill
+        }*/
+
+        if (_message.Contains("custom-reward-id="))
+        {
+            string[] _rewardSeparator = new string[] { "custom-reward-id=" };
+            string[] _rewardResult = _message.Split(_rewardSeparator, StringSplitOptions.None);
+            string _rewardID = _rewardResult[1].Substring(0, _rewardResult[1].IndexOf(";", 0));
+
+            ProcessRewards(_rewardID);
+            print("Redeemed a custom reward ID : " + _rewardID);//kill
+        } 
     }
     void ProcessRewards(string _rewardId)
     {
@@ -118,7 +116,7 @@ public class TwitchConnect : MonoBehaviour
 
     void CountPing()
     {
-        if (isConnect==true)
+        if (isConnect)
         {
             pingCounter += Time.deltaTime;
             if (pingCounter > 60)
@@ -155,13 +153,12 @@ public class TwitchConnect : MonoBehaviour
     }
     void Update()
     {
-        if (canCheck == true)
+        if (canCheck)
         {
             checkConnection();
             ProcessMessages();
             CountPing();
         }
-        
     }
     #endregion
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-public class ChatterData : MonoBehaviour
+public class CS_ChatterData : MonoBehaviour
 {
     public bool IsSub;
     public bool IsModerator;
@@ -11,10 +11,13 @@ public class ChatterData : MonoBehaviour
     public string ChatterID;
     public string Message;
 
-    public List<ChatterData> MinizChatters = new List<ChatterData>();
+    public List<CS_ChatterData> MinizChatters = new List<CS_ChatterData>();
 
-    #region Methodes
+    #region Miniz
 
-    
+    void checkMiniz(int _chatterID)
+    {
+        _chatterID = Convert.ToInt32("");
+    }   
     #endregion
 }
